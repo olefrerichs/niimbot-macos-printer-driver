@@ -1,0 +1,104 @@
+*PPD-Adobe: "4.3"
+*% NiiMBOT label printer PPD for ippeveprinter
+*% Minimal, driverless-friendly; sizes in points (1/72 in)
+
+*FormatVersion: "4.3"
+*FileVersion: "1.0"
+*LanguageVersion: English
+*LanguageEncoding: ISOLatin1
+*PCFileName: "NIIMBOT.PPD"
+*Manufacturer: "NiiMBOT"
+*ModelName: "NiiMBOT XLabel (BLE)"
+*Product: "(NiiMBOT ZLabel)"
+*NickName: "NiiMBOT ALabel (BLE)"
+*ShortNickName: "NiiMBOT YLabel"
+*cupsVersion: 2.4
+*cupsModelNumber: 1
+*cupsManualCopies: True
+*cupsFilter2: "application/pdf application/vnd.cups-pdf 0 -"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*ColorModel Gray/Grayscale: ""
+*DefaultColorModel: Gray
+
+*DefaultResolution: 203dpi
+*Resolution 203dpi/203 dpi: "<</HWResolution[203 203]>>setpagedevice"
+
+*OpenUI *MediaType/Media Type: PickOne
+*DefaultMediaType: Labels
+*MediaType Labels/Labels: ""
+*CloseUI: *MediaType
+
+*OpenUI *InputSlot/Media Source: PickOne
+*DefaultInputSlot: Roll-1
+*InputSlot Roll-1/Roll: ""
+*CloseUI: *InputSlot
+
+*OpenUI *cupsPrintQuality/Print Quality: PickOne
+*OrderDependency: 10 AnySetup *cupsPrintQuality
+*DefaultcupsPrintQuality: Normal
+*cupsPrintQuality Draft/Draft: ""
+*cupsPrintQuality Normal/Normal: ""
+*cupsPrintQuality High/High: ""
+*CloseUI: *cupsPrintQuality
+
+*OpenUI *PageSize/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageSize
+*DefaultPageSize: om_12x40mm
+*PageSize om_12x22mm/12x22 mm: "<</PageSize[34 62]>>setpagedevice"
+*PageSize om_12x30mm/12x30 mm: "<</PageSize[34 85]>>setpagedevice"
+*PageSize om_12x40mm/12x40 mm: "<</PageSize[34 113]>>setpagedevice"
+*PageSize om_12x75mm/12x75 mm: "<</PageSize[34 213]>>setpagedevice"
+*PageSize om_12x109mm/12x109 mm: "<</PageSize[34 309]>>setpagedevice"
+*PageSize om_14x30mm/14x30 mm: "<</PageSize[40 85]>>setpagedevice"
+*PageSize om_14x40mm/14x40 mm: "<</PageSize[40 113]>>setpagedevice"
+*PageSize om_15x30mm/15x30 mm: "<</PageSize[43 85]>>setpagedevice"
+*PageSize om_15x50mm/15x50 mm: "<</PageSize[43 142]>>setpagedevice"
+*CloseUI: *PageSize
+
+*OpenUI *PageRegion/Media Region: PickOne
+*DefaultPageRegion: om_12x40mm
+*PageRegion om_12x22mm/12x22 mm: "<</PageSize[34 62]>>setpagedevice"
+*PageRegion om_12x30mm/12x30 mm: "<</PageSize[34 85]>>setpagedevice"
+*PageRegion om_12x40mm/12x40 mm: "<</PageSize[34 113]>>setpagedevice"
+*PageRegion om_12x75mm/12x75 mm: "<</PageSize[34 213]>>setpagedevice"
+*PageRegion om_12x109mm/12x109 mm: "<</PageSize[34 309]>>setpagedevice"
+*PageRegion om_14x30mm/14x30 mm: "<</PageSize[40 85]>>setpagedevice"
+*PageRegion om_14x40mm/14x40 mm: "<</PageSize[40 113]>>setpagedevice"
+*PageRegion om_15x30mm/15x30 mm: "<</PageSize[43 85]>>setpagedevice"
+*PageRegion om_15x50mm/15x50 mm: "<</PageSize[43 142]>>setpagedevice"
+*CloseUI: *PageRegion
+
+*DefaultImageableArea: om_12x40mm
+*DefaultPaperDimension: om_12x40mm
+
+*ImageableArea om_12x22mm: "0 0 34 62"
+*PaperDimension om_12x22mm: "34 62"
+
+*ImageableArea om_12x30mm: "0 0 34 85"
+*PaperDimension om_12x30mm: "34 85"
+
+*ImageableArea om_12x40mm: "0 0 34 113"
+*PaperDimension om_12x40mm: "34 113"
+
+*ImageableArea om_12x75mm: "0 0 34 213"
+*PaperDimension om_12x75mm: "34 213"
+
+*ImageableArea om_12x109mm: "0 0 34 309"
+*PaperDimension om_12x109mm: "34 309"
+
+*ImageableArea om_14x30mm: "0 0 40 85"
+*PaperDimension om_14x30mm: "40 85"
+
+*ImageableArea om_14x40mm: "0 0 40 113"
+*PaperDimension om_14x40mm: "40 113"
+
+*ImageableArea om_15x30mm: "0 0 43 85"
+*PaperDimension om_15x30mm: "43 85"
+
+*ImageableArea om_15x50mm: "0 0 43 142"
+*PaperDimension om_15x50mm: "43 142"
+
+*DefaultOutputOrder: Normal
+*DefaultOutputBin: FaceUp
+*DefaultFont: Courier
