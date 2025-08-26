@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <!-- Unique label for this service -->
+    <key>Label</key>
+    <string>local.niimbot.ipp</string>
+
+    <!-- Run our start script directly (no exports here; script reads config/bridge.config.json) -->
+    <key>ProgramArguments</key>
+    <array>
+      <string>@@REPO_DIR@@/scripts/start-printer.sh</string>
+    </array>
+
+    <!-- Run when loaded and keep it alive -->
+    <key>RunAtLoad</key><true/>
+    <key>KeepAlive</key><true/>
+
+    <!-- Run from the repo root so relative paths work -->
+    <key>WorkingDirectory</key>
+    <string>@@REPO_DIR@@</string>
+
+    <!-- Environment for the service -->
+    <key>EnvironmentVariables</key>
+    <dict>
+      <!-- PATH so ippeveprinter / convert / node are found -->
+      <key>PATH</key>
+      <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+
+      <!-- Optional: change IPP port (defaults to 8631 if unset) -->
+      <key>IPP_PORT</key>
+      <string>8631</string>
+
+      <!-- Debug mode: "1" keeps .spool PNGs and writes .spool/ippeve.log -->
+      <!-- Set to "0" (or remove) to run quietly and clean .spool on start -->
+      <key>NIIMBOT_DEBUG</key>
+      <string>0</string>
+    </dict>
+
+    <!-- We let the script own logging; discard stdout/stderr from launchd -->
+    <key>StandardOutPath</key>
+    <string>/dev/null</string>
+    <key>StandardErrorPath</key>
+    <string>/dev/null</string>
+  </dict>
+</plist>
