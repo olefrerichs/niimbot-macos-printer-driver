@@ -21,7 +21,7 @@ Jobs are rasterised and sent over **Bluetooth (BLE)** using [`@mmote/niimblue-no
 
 ## Requirements
 
-- macOS 13+ (Sonoma) or 15 (Sequoia)
+- macOS 14+ (Sonoma)
 - Node.js 18+ (`brew install node`)
 - Xcode Command Line Tools (`xcode-select --install`)
 - ImageMagick (`brew install imagemagick`)
@@ -54,7 +54,7 @@ e.g. NIIMBOT_RENDER=photo ./scripts/start-printer.sh
 
 ```bash
 # 1) Clone & install
-git clone https://github.com/YOUR-USER/niimbot-macos-printer-driver.git
+git clone https://github.com/olefrerichs/niimbot-macos-printer-driver.git
 cd niimbot-macos-printer-driver
 npm install
 
@@ -80,7 +80,7 @@ chmod +x scripts/*.sh src/bridge.mjs
 ### Print dialog tips
 
 - **Paper Size** → pick your label (e.g. **12×40 mm**)
-- **Quality/Density** → try *Normal* first, increase darkness if needed
+- **Quality** → try *Normal* first, increase/decrease if needed, adjusts lightness/darkness
 - Save **Presets**: *Presets ▸ Save Current Settings as Preset…* (e.g., “12×40 High Density”)
 
 ### Render quality presets
@@ -132,7 +132,7 @@ launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
   Set `"DIRECTION": "top"` in `config/bridge.config.json` (or `NIIMBOT_DIRECTION=top`).
 
 - **Too light/dark**  
-  Adjust Print dialog **Quality/Density** or tweak `"THRESHOLD"` in config.
+  Adjust Print dialog **Quality** or tweak `"THRESHOLD"` in config.
 
 - **PDFs don’t print**  
   Ensure ImageMagick is installed (`brew install imagemagick`).
@@ -144,8 +144,7 @@ launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
 
 - **Roll sizes (preconfigured):**  
   12×22, 12×30, 12×40, 12×75, 12×109 mm  
-  14×30, 14×40 mm  
-  15×30, 15×50 mm
+  14×30, 14×40, 15×30, 15×50 mm
 
   (See `config/niimbot.ppd` for details.)
 
