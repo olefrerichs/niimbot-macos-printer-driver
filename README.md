@@ -39,7 +39,7 @@ Put your printer’s BLE name into `config/bridge.config.json`:
   "NIIMBLUE_NAME": "D110_M-XXXXYYYY", // required
   "RENDER": "text",           // "text" or "photo"
   "THRESHOLD": "60%",         // used for RENDER="text"
-  "DIRECTION": "",            // "", or "top"|"left"|"right"|"bottom"
+  "DIRECTION": "",            // "", or "top"|"left"
   "ROTATE_FOR_LEFT": "0",     // "1" to rotate +90° when direction=left
   "LABEL_TYPE": 1,            // printer's label type (usually leave at 1)
   "QUANTITY": 1,              // number of labels per job
