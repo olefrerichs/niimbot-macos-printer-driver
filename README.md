@@ -1,10 +1,10 @@
 # NiiMBOT macOS Printer Driver (AirPrint/IPP, Bluetooth)
 
-Use your **NiiMBOT label printer** (D100_M, D110, D11, etc.) as a **normal printer on macOS** (Sonoma / Sequoia).  
+Use your **NiiMBOT label printer** (D110_M, D110, D11, etc.) as a **normal printer on macOS** (Sonoma / Sequoia).  
 This project exposes a local **AirPrint / IPP Everywhere** queue so every app’s **Print** dialog works.  
 Jobs are rasterised and sent over **Bluetooth (BLE)** using [`@mmote/niimblue-node`](https://github.com/MultiMote/niimblue-node), with **label size & density presets**.
 
-> **Tested device:** NiiMBOT **D100_M** only (by the maintainer).  
+> **Tested device:** NiiMBOT **D110_M** only (by the maintainer).  
 > It *should* work with any printer models supported by [`niimblue-node`](https://github.com/MultiMote/niimblue-node).  
 > Model-specific tweaks may be needed. Contributions and test reports are welcome!
 
@@ -60,7 +60,7 @@ npm install
 
 # 2) Discover your printer's BLE name
 npm run scan:ble
-# Example: D100-AB12CD34 or D110-ABCDEF1234
+# Example: D110-AB12CD34 or D110-ABCDEF1234
 
 # 3) Put the name into config/bridge.config.json
 
@@ -140,7 +140,7 @@ launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
 ###  Supported printers & media
 
 - **Models:** Any supported by `niimblue-node`.  
-  Confirmed: **D100_M**. Expected: **D110**, **D11**.
+  Confirmed: **D110_M**. Expected: **D110**, **D11**.
 
 - **Roll sizes (preconfigured):**  
   12×22, 12×30, 12×40, 12×75, 12×109 mm  

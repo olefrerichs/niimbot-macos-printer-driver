@@ -26,7 +26,7 @@ const defaults = {
     NIIMBLUE_NAME: "",              // set in config/bridge.config.json
     RENDER: "text",                 // "text" | "photo"
     THRESHOLD: "60%",               // used when RENDER="text"
-    DIRECTION: "",                  // "", "top"|"left"|"right"|"bottom"
+    DIRECTION: "",                  // "", "top"|"left"
     ROTATE_FOR_LEFT: "0",           // "1" to rotate raster when direction=left
     LABEL_TYPE: 1,                  // SDK labelType (printer default often 1)
     QUANTITY: 1,                    // how many labels per job
