@@ -11,7 +11,7 @@ Jobs are rasterised and sent over **Bluetooth (BLE)** using [`@mmote/niimblue-no
 
 ## Features
 
-- Works with macOS **Sonoma 14** / **Sequoia 15**
+- Works with macOS **Sonoma 14** / **Sequoia 15** / **Tahoe 26**
 - **AirPrint / IPP Everywhere** queue (no vendor driver)
 - **Bluetooth (BLE)** bridge via `niimblue-node`
 - Real **Paper/Label sizes** in the Print dialog (presets supported)
