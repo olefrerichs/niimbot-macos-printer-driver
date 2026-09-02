@@ -130,8 +130,21 @@ function mapDensity(darknessStr, quality, meta) {
 }
 
 // ---- Rasterise (one PNG per page) -------------------------------------------
-const inPath = process.argv[2] && process.argv[2] !== "-" ? process.argv[2] : null;
-if (!inPath || !fs.existsSync(inPath)) {
+const inPathArg = process.argv[2] && process.argv[2] !== "-" ? process.argv[2] : null;
+// Job files are always spooled by ippeveprinter under ROOT/.spool (see -d flag in
+// scripts/start-printer.sh). Resolve symlinks/".." and require the real path to stay
+// inside that directory to prevent path traversal to arbitrary files (e.g. /etc/passwd).
+let inPath = null;
+if (inPathArg) {
+    try {
+        const spoolRoot = fs.realpathSync(path.join(ROOT, ".spool"));
+        const resolved = fs.realpathSync(path.resolve(inPathArg));
+        if ((resolved === spoolRoot || resolved.startsWith(spoolRoot + path.sep)) && fs.statSync(resolved).isFile()) {
+            inPath = resolved;
+        }
+    } catch { /* missing/invalid path falls through to the error below */ }
+}
+if (!inPath) {
     logError("No job file path provided");
     process.exit(2);
 }
