@@ -18,7 +18,8 @@
   },
   "scripts": {
     "scan:ble": "niimblue-cli scan -t ble",
-    "start": "IPP_PORT=${IPP_PORT:-8631} ./scripts/start-printer.sh"
+    "start": "IPP_PORT=${IPP_PORT:-8631} ./scripts/start-printer.sh",
+    "info": "niimblue-cli info -t ble -a \"$(node -p 'require(\"./config/bridge.config.json\").NIIMBLUE_NAME')\""
   },
   "dependencies": {
     "@mmote/niimblue-node": "^1.2.0",

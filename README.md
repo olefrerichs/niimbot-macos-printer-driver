@@ -15,7 +15,12 @@ Jobs are rasterised and sent over **Bluetooth (BLE)** using [`@mmote/niimblue-no
 - **AirPrint / IPP Everywhere** queue (no vendor driver)
 - **Bluetooth (BLE)** bridge via `niimblue-node`
 - Real **Paper/Label sizes** in the Print dialog (presets supported)
-- **Density / darkness** control (mapped from Print dialog)
+- **Multi-page documents**: every PDF page becomes one label, printed as a single job
+- **Copies** from the Print dialog (collated or uncollated), times an optional per-job quantity
+- **Density / darkness** and **print speed** mapped from the Print dialog's Quality setting, within the model's supported density range
+- **Label type** taken from the roll's RFID tag or the printer (configurable override)
+- **Printer status in the macOS queue**: cover open, out of labels, battery low, feed error, wrong label type
+- **Supply levels** in the printer's macOS info panel: remaining labels on the roll and battery charge
 - **Debug mode** (keeps logs and rendered rasters in `.spool`)
 
 
@@ -42,8 +47,13 @@ Put your printer’s BLE name into `config/bridge.config.json`:
   "THRESHOLD": "60%",         // used for RENDER="text"
   "DIRECTION": "",            // "", or "top"|"left"
   "ROTATE_FOR_LEFT": "0",     // "1" to rotate +90° when direction=left
-  "LABEL_TYPE": 1,            // printer's label type (usually leave at 1)
-  "QUANTITY": 1,              // number of labels per job
+  "LABEL_TYPE": "",           // "" = from the roll's RFID tag / printer; 1 gaps, 2 black mark, 3 continuous, 5 transparent
+  "QUANTITY": 1,              // labels per copy (multiplied with Copies from the Print dialog)
+  "SPEED": "",                // "" = from Quality (High -> 0); 0 = slower/higher quality, 1 = normal. D110M_V4-class printers only
+  "COLOR": "",                // multicolor paper temperature (B1 / D110M_V4 only); "" = library default
+  "PAGE_TIMEOUT_MS": 10000,   // timeout for sending one page's image data
+  "STATUS_TIMEOUT_MS": 8000,  // timeout per status poll while waiting for the printer
+  "STATUS_POLL_MS": 500,      // status poll interval
   "DEBUG": "0"                // "1" = keep logs & .spool PNGs, "0" = quiet
 }
 ```
@@ -84,7 +94,9 @@ chmod +x scripts/*.sh src/bridge.mjs
 ### Print dialog tips
 
 - **Paper Size** → pick your label (e.g. **12×40 mm**)
-- **Quality** → try *Normal* first, increase/decrease if needed, adjusts lightness/darkness
+- **Quality** → *Draft* = lowest density, *Normal* = the model's default, *High* = highest density and, on D110M_V4-class printers, the slower high-quality print mode
+- **Copies** → prints that many labels per page; multi-page documents are collated unless the dialog says otherwise
+- **Pages** → each page of the document is one label; use *Pages: from/to* to print a subset
 - Save **Presets**: *Presets ▸ Save Current Settings as Preset…* (e.g., “12×40 High Density”)
 
 ### Render quality presets
@@ -150,14 +162,22 @@ launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
 - **Too light/dark**  
   Adjust Print dialog **Quality** or tweak `"THRESHOLD"` in config.
 
+- **Queue shows “Cover open”, “Out of labels”, “Low supply”, ...**  
+  The printer reported the condition before or during the job. Fix it and print again; the status clears with the next job.
+
+- **Printer info panel shows “Labels” and “Battery” levels**  
+  Read from the roll's RFID tag and the printer at every job. Rolls without a tag show only the battery.
+
 - **PDFs don’t print** (queue shows the job for a second, then it disappears; `ippeve.log` says `convert failed`)  
   Ensure both ImageMagick and Ghostscript are installed (`brew install imagemagick ghostscript`).  
   Test with `convert -density 406 some.pdf out.png` — `gs: command not found` means Ghostscript is missing.
 
 ###  Supported printers & media
 
-- **Models:** Any supported by `niimblue-node`.  
-  Confirmed: **D110_M**. Expected: **D110**, **D11**.
+- **Models:** Any with a print task in [`niimbluelib`](https://github.com/MultiMote/niimbluelib/blob/main/src/print_tasks/index.ts)
+  (D11, D110, D110_M, D101, B1, B21 variants, B21_PRO, B1_PRO, H1S, and more; 80 models are recognised).  
+  Confirmed by the maintainer: **D110_M** (protocol v4).  
+  `npm run info` connects to your printer and prints its model, firmware, battery and the detected print task.
 
 - **Roll sizes (preconfigured):**  
   12×22, 12×30, 12×40, 12×75, 12×109 mm  
