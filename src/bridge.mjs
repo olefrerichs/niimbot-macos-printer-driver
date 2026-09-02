@@ -10,7 +10,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import sharp from "sharp";
-import { initClient, ImageEncoder, printImage } from "@mmote/niimblue-node";
+import { initClient, ImageEncoder, printImages } from "@mmote/niimblue-node";
 
 // ---------- Settings (config + env) ----------
 const ROOT = process.cwd();
@@ -151,9 +151,18 @@ try {
             ? [...common, "-dither", "FloydSteinberg", "-colors", "2", "-type", "bilevel", pngOut]
             : [...common, "-unsharp", "0x1+0.8+0.02", "-threshold", SETTINGS.THRESHOLD, "-type", "bilevel", pngOut];
 
-        const conv = spawnSync("convert", args, { stdio: SETTINGS.DEBUG ? "inherit" : "ignore" });
+        const conv = spawnSync("convert", args, { stdio: ["ignore", "ignore", "pipe"] });
+        if (conv.error?.code === "ENOENT") {
+            logError("ImageMagick 'convert' not found on PATH (brew install imagemagick ghostscript)");
+            process.exit(3);
+        }
         if (conv.status !== 0) {
-            logError("convert failed");
+            // Keep the last meaningful stderr lines (skip the IMv7 deprecation banner)
+            const detail = (conv.stderr || "").toString()
+                .split("\n").map(l => l.trim())
+                .filter(l => l && !/deprecated/i.test(l))
+                .slice(-3).join(" | ");
+            logError(`convert failed (exit ${conv.status})${detail ? ": " + detail : ""}`);
             process.exit(3);
         }
     }
@@ -202,7 +211,7 @@ try {
     const task = client.getPrintTaskType();
     const quantity = SETTINGS.QUANTITY;
 
-    await printImage(client, task, encoded, {
+    await printImages(client, task, [{ encoded, quantity }], {
         density,
         labelType: SETTINGS.LABEL_TYPE,
         quantity
