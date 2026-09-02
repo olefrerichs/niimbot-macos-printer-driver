@@ -32,7 +32,7 @@ Jobs are rasterised and sent over **Bluetooth (BLE)** using [`@mmote/niimblue-no
 - ImageMagick (`brew install imagemagick`)
 - Ghostscript (`brew install ghostscript`)
 - `ippeveprinter` (ships with macOS as part of CUPS: `/usr/bin/ippeveprinter`)
-- **Bluetooth permission** for your terminal app  
+- **Bluetooth permission** for your node/terminal app  
   (System Settings → Privacy & Security → Bluetooth)
 
 
