@@ -45,59 +45,59 @@
 *OpenUI *PageSize/Media Size: PickOne
 *OrderDependency: 10 AnySetup *PageSize
 *DefaultPageSize: om_12x40mm
-*PageSize om_12x22mm/12x22 mm: "<</PageSize[34 62]>>setpagedevice"
-*PageSize om_12x30mm/12x30 mm: "<</PageSize[34 85]>>setpagedevice"
-*PageSize om_12x40mm/12x40 mm: "<</PageSize[34 113]>>setpagedevice"
-*PageSize om_12x75mm/12x75 mm: "<</PageSize[34 213]>>setpagedevice"
-*PageSize om_12x109mm/12x109 mm: "<</PageSize[34 309]>>setpagedevice"
-*PageSize om_14x30mm/14x30 mm: "<</PageSize[40 85]>>setpagedevice"
-*PageSize om_14x40mm/14x40 mm: "<</PageSize[40 113]>>setpagedevice"
-*PageSize om_15x30mm/15x30 mm: "<</PageSize[43 85]>>setpagedevice"
-*PageSize om_15x50mm/15x50 mm: "<</PageSize[43 142]>>setpagedevice"
+*PageSize om_12x22mm/12x22 mm: "<</PageSize[34.02 62.36]>>setpagedevice"
+*PageSize om_12x30mm/12x30 mm: "<</PageSize[34.02 85.04]>>setpagedevice"
+*PageSize om_12x40mm/12x40 mm: "<</PageSize[34.02 113.39]>>setpagedevice"
+*PageSize om_12x75mm/12x75 mm: "<</PageSize[34.02 212.60]>>setpagedevice"
+*PageSize om_12x109mm/12x109 mm: "<</PageSize[34.02 308.98]>>setpagedevice"
+*PageSize om_14x30mm/14x30 mm: "<</PageSize[39.69 85.04]>>setpagedevice"
+*PageSize om_14x40mm/14x40 mm: "<</PageSize[39.69 113.39]>>setpagedevice"
+*PageSize om_15x30mm/15x30 mm: "<</PageSize[42.52 85.04]>>setpagedevice"
+*PageSize om_15x50mm/15x50 mm: "<</PageSize[42.52 141.73]>>setpagedevice"
 *CloseUI: *PageSize
 
 *OpenUI *PageRegion/Media Region: PickOne
 *DefaultPageRegion: om_12x40mm
-*PageRegion om_12x22mm/12x22 mm: "<</PageSize[34 62]>>setpagedevice"
-*PageRegion om_12x30mm/12x30 mm: "<</PageSize[34 85]>>setpagedevice"
-*PageRegion om_12x40mm/12x40 mm: "<</PageSize[34 113]>>setpagedevice"
-*PageRegion om_12x75mm/12x75 mm: "<</PageSize[34 213]>>setpagedevice"
-*PageRegion om_12x109mm/12x109 mm: "<</PageSize[34 309]>>setpagedevice"
-*PageRegion om_14x30mm/14x30 mm: "<</PageSize[40 85]>>setpagedevice"
-*PageRegion om_14x40mm/14x40 mm: "<</PageSize[40 113]>>setpagedevice"
-*PageRegion om_15x30mm/15x30 mm: "<</PageSize[43 85]>>setpagedevice"
-*PageRegion om_15x50mm/15x50 mm: "<</PageSize[43 142]>>setpagedevice"
+*PageRegion om_12x22mm/12x22 mm: "<</PageSize[34.02 62.36]>>setpagedevice"
+*PageRegion om_12x30mm/12x30 mm: "<</PageSize[34.02 85.04]>>setpagedevice"
+*PageRegion om_12x40mm/12x40 mm: "<</PageSize[34.02 113.39]>>setpagedevice"
+*PageRegion om_12x75mm/12x75 mm: "<</PageSize[34.02 212.60]>>setpagedevice"
+*PageRegion om_12x109mm/12x109 mm: "<</PageSize[34.02 308.98]>>setpagedevice"
+*PageRegion om_14x30mm/14x30 mm: "<</PageSize[39.69 85.04]>>setpagedevice"
+*PageRegion om_14x40mm/14x40 mm: "<</PageSize[39.69 113.39]>>setpagedevice"
+*PageRegion om_15x30mm/15x30 mm: "<</PageSize[42.52 85.04]>>setpagedevice"
+*PageRegion om_15x50mm/15x50 mm: "<</PageSize[42.52 141.73]>>setpagedevice"
 *CloseUI: *PageRegion
 
 *DefaultImageableArea: om_12x40mm
 *DefaultPaperDimension: om_12x40mm
 
-*ImageableArea om_12x22mm: "0 0 34 62"
-*PaperDimension om_12x22mm: "34 62"
+*ImageableArea om_12x22mm: "0.28 0.28 33.74 62.08"
+*PaperDimension om_12x22mm: "34.02 62.36"
 
-*ImageableArea om_12x30mm: "0 0 34 85"
-*PaperDimension om_12x30mm: "34 85"
+*ImageableArea om_12x30mm: "0.28 0.28 33.74 84.76"
+*PaperDimension om_12x30mm: "34.02 85.04"
 
-*ImageableArea om_12x40mm: "0 0 34 113"
-*PaperDimension om_12x40mm: "34 113"
+*ImageableArea om_12x40mm: "0.28 0.28 33.74 113.11"
+*PaperDimension om_12x40mm: "34.02 113.39"
 
-*ImageableArea om_12x75mm: "0 0 34 213"
-*PaperDimension om_12x75mm: "34 213"
+*ImageableArea om_12x75mm: "0.28 0.28 33.74 212.32"
+*PaperDimension om_12x75mm: "34.02 212.60"
 
-*ImageableArea om_12x109mm: "0 0 34 309"
-*PaperDimension om_12x109mm: "34 309"
+*ImageableArea om_12x109mm: "0.28 0.28 33.74 308.70"
+*PaperDimension om_12x109mm: "34.02 308.98"
 
-*ImageableArea om_14x30mm: "0 0 40 85"
-*PaperDimension om_14x30mm: "40 85"
+*ImageableArea om_14x30mm: "0.28 0.28 39.41 84.76"
+*PaperDimension om_14x30mm: "39.69 85.04"
 
-*ImageableArea om_14x40mm: "0 0 40 113"
-*PaperDimension om_14x40mm: "40 113"
+*ImageableArea om_14x40mm: "0.28 0.28 39.41 113.11"
+*PaperDimension om_14x40mm: "39.69 113.39"
 
-*ImageableArea om_15x30mm: "0 0 43 85"
-*PaperDimension om_15x30mm: "43 85"
+*ImageableArea om_15x30mm: "0.28 0.28 42.24 84.76"
+*PaperDimension om_15x30mm: "42.52 85.04"
 
-*ImageableArea om_15x50mm: "0 0 43 142"
-*PaperDimension om_15x50mm: "43 142"
+*ImageableArea om_15x50mm: "0.28 0.28 42.24 141.45"
+*PaperDimension om_15x50mm: "42.52 141.73"
 
 *DefaultOutputOrder: Normal
 *DefaultOutputBin: FaceUp

@@ -10,6 +10,9 @@ echo "Adding printer '${PRINTER_NAME}' at ${IPP_URL} (driverless 'everywhere') .
 lpadmin -x "${PRINTER_NAME}" 2>/dev/null || true
 lpadmin -p "${PRINTER_NAME}" -E -v "${IPP_URL}" -m everywhere
 
+# CUPS hardcodes Normal as the quality default in generated PPDs; labels look best at High
+lpadmin -p "${PRINTER_NAME}" -o cupsPrintQuality=High
+
 # Optional: share printers locally (harmless if already set)
 cupsctl --share-printers || true
 

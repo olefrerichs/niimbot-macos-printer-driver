@@ -131,8 +131,10 @@ git pull
 npm install                      # picks up dependency changes
 which gs || brew install ghostscript   # required since v0.2.0
 launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp   # restart if you use the LaunchAgent
+./scripts/add-macos-printer.sh   # re-create the macOS queue when the release notes say the PPD changed
 ```
 If you started the printer manually instead, stop it and run `./scripts/start-printer.sh` again.  
+Re-creating the queue regenerates the macOS-side PPD (paper size names, quality default); your saved presets in the Print dialog keep working.  
 `git pull` keeps your edits to `config/bridge.config.json` unless the release changed that file too; if it complains, run `git stash && git pull && git stash pop`.
 
 ### Launch at login (LaunchAgent)
