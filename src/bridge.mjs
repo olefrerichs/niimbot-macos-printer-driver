@@ -269,10 +269,13 @@ try {
     logInfo(`printer model=${model} task=${taskName} protocol=${info.protocolVersion} fw=${info.softwareVersion} serial=${info.serial}`);
 
     // --- Supplies: battery + label roll (RFID) -> marker-* attributes shown by macOS
-    const markers = { names: [], types: [], levels: [], colors: [] };
+    // macOS reads marker-* from CUPS; use #RRGGBB colours like real printers do.
+    const markers = { names: [], types: [], levels: [], colors: [], supply: [] };
     if (typeof info.charge === "number") {
+        const level = clamp(info.charge * 25, 0, 100);
         markers.names.push("Battery"); markers.types.push("other");
-        markers.levels.push(clamp(info.charge * 25, 0, 100)); markers.colors.push("none");
+        markers.levels.push(level); markers.colors.push("#4CAF50");
+        markers.supply.push(`index=${markers.supply.length + 1};class=supplyThatIsConsumed;type=other;unit=percent;maxcapacity=100;level=${level};colorantname=unknown;`);
     }
     let labelTypeFromRoll = null;
     try {
@@ -282,7 +285,8 @@ try {
             if (rfid.allPaper > 0) {
                 const remaining = clamp(Math.round(100 * (rfid.allPaper - rfid.usedPaper) / rfid.allPaper), 0, 100);
                 markers.names.push("Labels"); markers.types.push("other");
-                markers.levels.push(remaining); markers.colors.push("none");
+                markers.levels.push(remaining); markers.colors.push("#9E9E9E");
+                markers.supply.push(`index=${markers.supply.length + 1};class=supplyThatIsConsumed;type=other;unit=percent;maxcapacity=100;level=${remaining};colorantname=unknown;`);
                 logInfo(`label roll: ${rfid.allPaper - rfid.usedPaper}/${rfid.allPaper} left, type ${rfid.consumablesType}, barcode ${rfid.barCode}`);
             }
         }
@@ -291,6 +295,8 @@ try {
     }
     if (markers.names.length) {
         attr(`marker-names=${markers.names.join(",")} marker-types=${markers.types.join(",")} marker-colors=${markers.colors.join(",")} marker-levels=${markers.levels.join(",")} marker-low-levels=${markers.names.map(() => 10).join(",")} marker-high-levels=${markers.names.map(() => 100).join(",")}`);
+        // Replace ippeveprinter's placeholder toner entries (IPP Everywhere printer-supply)
+        attr(`printer-supply=${markers.supply.map(v => `'${v}'`).join(",")} printer-supply-description=${markers.names.join(",")}`);
     }
 
     // --- Pre-flight: lid / paper / ribbon from the heartbeat, battery level
