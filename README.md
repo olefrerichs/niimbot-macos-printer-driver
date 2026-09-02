@@ -20,7 +20,7 @@ Jobs are rasterised and sent over **Bluetooth (BLE)** using [`@mmote/niimblue-no
 - **Density / darkness** and **print speed** mapped from the Print dialog's Quality setting, within the model's supported density range
 - **Label type** taken from the roll's RFID tag or the printer (configurable override)
 - **Printer status in the macOS queue**: cover open, out of labels, battery low, feed error, wrong label type
-- **Supply levels** in the printer's macOS info panel: remaining labels on the roll and battery charge
+- **Supply levels** reported to CUPS: remaining labels on the roll and battery charge (`lpstat -l -p`, `ipptool`; macOS's own Supply Levels panel ignores them for locally attached IPP queues)
 - **Debug mode** (keeps logs and rendered rasters in `.spool`)
 
 
@@ -167,8 +167,10 @@ launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
 - **Queue shows “Cover open”, “Out of labels”, “Low supply”, ...**  
   The printer reported the condition before or during the job. Fix it and print again; the status clears with the next job.
 
-- **Printer info panel shows “Labels” and “Battery” levels**  
-  Read from the roll's RFID tag and the printer at every job. Rolls without a tag show only the battery.
+- **Supply levels**  
+  Remaining labels (from the roll's RFID tag) and battery charge are reported to CUPS at every job:  
+  `ipptool -tv ipp://localhost:631/printers/Niimbot_BLE get-printer-attributes.test | grep marker-`.  
+  macOS's *Options & Supplies → Supply Levels* panel shows “Information Not Available” for this queue; it only fetches supplies from Bonjour-discovered printers, not from CUPS.
 
 - **PDFs don’t print** (queue shows the job for a second, then it disappears; `ippeve.log` says `convert failed`)  
   Ensure both ImageMagick and Ghostscript are installed (`brew install imagemagick ghostscript`).  
