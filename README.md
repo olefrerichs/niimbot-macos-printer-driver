@@ -111,6 +111,18 @@ NIIMBOT_DEBUG=1 ./scripts/start-printer.sh
 ```
 When Debug=0 (default), .spool is emptied on start and logs are suppressed.
 
+### Updating to a new version
+
+```bash
+cd niimbot-macos-printer-driver
+git pull
+npm install                      # picks up dependency changes
+which gs || brew install ghostscript   # required since v0.2.0
+launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp   # restart if you use the LaunchAgent
+```
+If you started the printer manually instead, stop it and run `./scripts/start-printer.sh` again.  
+`git pull` keeps your edits to `config/bridge.config.json` unless the release changed that file too; if it complains, run `git stash && git pull && git stash pop`.
+
 ### Launch at login (LaunchAgent)
 Install the LaunchAgent:
 ```bash
