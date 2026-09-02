@@ -1,6 +1,6 @@
 # NiiMBOT macOS Printer Driver (AirPrint/IPP, Bluetooth)
 
-Use your **NiiMBOT label printer** (D110_M, D110, D11, etc.) as a **normal printer on macOS** (Sonoma / Sequoia).  
+Use your **NiiMBOT label printer** (D110_M, D110, D11, etc.) as a **normal printer on macOS** (Sonoma / Sequoia / Tahoe).  
 This project exposes a local **AirPrint / IPP Everywhere** queue so every app’s **Print** dialog works.  
 Jobs are rasterised and sent over **Bluetooth (BLE)** using [`@mmote/niimblue-node`](https://github.com/MultiMote/niimblue-node), with **label size & density presets**.
 
@@ -27,11 +27,11 @@ Jobs are rasterised and sent over **Bluetooth (BLE)** using [`@mmote/niimblue-no
 ## Requirements
 
 - macOS 14+ (Sonoma)
-- Node.js 18+ (`brew install node`)
+- Node.js 20.9+ (`brew install node`); older versions fail at startup inside `sharp`
 - Xcode Command Line Tools (`xcode-select --install`)
 - ImageMagick (`brew install imagemagick`)
 - Ghostscript (`brew install ghostscript`)
-- `ippeveprinter` (included in CUPS; install via `brew install ipp-tools` if missing)
+- `ippeveprinter` (ships with macOS as part of CUPS: `/usr/bin/ippeveprinter`)
 - **Bluetooth permission** for your terminal app  
   (System Settings → Privacy & Security → Bluetooth)
 
@@ -86,7 +86,8 @@ chmod +x scripts/*.sh src/bridge.mjs
 
 # 5) Add the printer in macOS
 ./scripts/add-macos-printer.sh
-# (or add ipp://localhost:8631/ipp/print manually in System Settings)
+# (adding ipp://localhost:8631/ipp/print manually in System Settings also works,
+#  but then set Quality=High and the printer name yourself)
 ```
 
 ---
@@ -147,13 +148,12 @@ launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
 ```
 - The LaunchAgent runs scripts/start-printer.sh at login.
 - Printer name & defaults are read from config/bridge.config.json.
-- To enable persistent debug mode, edit the plist and add:
-```xml
-<key>EnvironmentVariables</key>
-<dict>
-<key>NIIMBOT_DEBUG</key><string>1</string>
-</dict>
+- To enable persistent debug mode, set `NIIMBOT_DEBUG` to `1` in the installed plist and restart:
+```bash
+plutil -replace EnvironmentVariables.NIIMBOT_DEBUG -string 1 ~/Library/LaunchAgents/local.niimbot.ipp.plist
+launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
 ```
+  Set it back to `0` the same way; `.spool` is emptied on the next start.
 ### Troubleshooting
 
 - **Queue says “In Use” then “Idle” but nothing prints**  
@@ -181,7 +181,7 @@ launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
 ###  Supported printers & media
 
 - **Models:** Any with a print task in [`niimbluelib`](https://github.com/MultiMote/niimbluelib/blob/main/src/print_tasks/index.ts)
-  (D11, D110, D110_M, D101, B1, B21 variants, B21_PRO, B1_PRO, H1S, and more; 80 models are recognised).  
+  (D11, D110, D110_M, D101, B1, B21 variants, B21_PRO, B1_PRO, H1S, and more; about 80 models are recognised).  
   Confirmed by the maintainer: **D110_M** (protocol v4).  
   `npm run info` connects to your printer and prints its model, firmware, battery and the detected print task.
 
@@ -193,6 +193,5 @@ launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
 
 
 ### Roadmap
-- Auto-detect model variants (e.g. D110_M) and tune protocol/init
 - Optional pure-Node IPP server (no ippeveprinter dependency)
 - Homebrew formula for one-command install
