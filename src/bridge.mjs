@@ -261,18 +261,18 @@ function updateQueueDescription(status) {
     if (!SETTINGS.STATUS_IN_NAME) return;
     try {
         const port = process.env.IPP_PORT || "8631";
-        const queues = spawnSync("lpstat", ["-v"], { encoding: "utf8" }).stdout || "";
+        const queues = spawnSync("/usr/bin/lpstat", ["-v"], { encoding: "utf8" }).stdout || "";
         const re = new RegExp(`^device for ([^:]+): ipp://(localhost|127\\.0\\.0\\.1|\\[::1\\]):${port}/`, "i");
         for (const line of queues.split("\n")) {
             const m = re.exec(line.trim());
             if (!m) continue;
             const queue = m[1];
-            const info = spawnSync("lpstat", ["-l", "-p", queue], { encoding: "utf8" }).stdout || "";
+            const info = spawnSync("/usr/bin/lpstat", ["-l", "-p", queue], { encoding: "utf8" }).stdout || "";
             const cur = (/^\s*Description:\s*(.*)$/m.exec(info)?.[1] || "").trim();
             const base = cur.replace(/\s*\[[^\]]*\]\s*$/, "").trim() || `Niimbot ${SETTINGS.NAME.split("-")[0]}`;
             const next = status ? `${base} [${status}]` : base;
             if (next === cur) continue;
-            const r = spawnSync("lpadmin", ["-p", queue, "-D", next], { encoding: "utf8" });
+            const r = spawnSync("/usr/sbin/lpadmin", ["-p", queue, "-D", next], { encoding: "utf8" });
             if (r.status === 0) logInfo(`queue ${queue} description -> "${next}"`);
             else logInfo(`lpadmin failed for ${queue}: ${(r.stderr || "").trim()}`);
         }
