@@ -36,6 +36,7 @@ const defaults = {
     PAGE_TIMEOUT_MS: 10000,         // timeout for sending one page's image data
     STATUS_TIMEOUT_MS: 8000,        // timeout for each status poll while waiting for the printer
     STATUS_POLL_MS: 500,            // status poll interval
+    STATUS_IN_NAME: "1",            // "1" = append "[Labels 81% · Battery 75%]" to the macOS printer name after each job
     DEBUG: "0"                      // "1" keeps logs & .spool PNGs; "0" quiet mode
 };
 
@@ -62,6 +63,7 @@ const SETTINGS = {
     PAGE_TIMEOUT_MS: intOrNull(pick("PAGE_TIMEOUT_MS")) ?? defaults.PAGE_TIMEOUT_MS,
     STATUS_TIMEOUT_MS: intOrNull(pick("STATUS_TIMEOUT_MS")) ?? defaults.STATUS_TIMEOUT_MS,
     STATUS_POLL_MS: intOrNull(pick("STATUS_POLL_MS")) ?? defaults.STATUS_POLL_MS,
+    STATUS_IN_NAME: pick("STATUS_IN_NAME") === "1",
     DEBUG: pick("DEBUG") === "1"
 };
 
@@ -252,6 +254,33 @@ function describeError(e) {
     return { keyword: "other", text: e?.message || String(e) };
 }
 
+// ---- macOS printer name = CUPS queue description --------------------------
+// macOS shows a queue's description as the printer name and ignores CUPS
+// marker-* supply levels for local IPP queues, so we put the levels there.
+function updateQueueDescription(status) {
+    if (!SETTINGS.STATUS_IN_NAME) return;
+    try {
+        const port = process.env.IPP_PORT || "8631";
+        const queues = spawnSync("lpstat", ["-v"], { encoding: "utf8" }).stdout || "";
+        const re = new RegExp(`^device for ([^:]+): ipp://(localhost|127\\.0\\.0\\.1|\\[::1\\]):${port}/`, "i");
+        for (const line of queues.split("\n")) {
+            const m = re.exec(line.trim());
+            if (!m) continue;
+            const queue = m[1];
+            const info = spawnSync("lpstat", ["-l", "-p", queue], { encoding: "utf8" }).stdout || "";
+            const cur = (/^\s*Description:\s*(.*)$/m.exec(info)?.[1] || "").trim();
+            const base = cur.replace(/\s*\[[^\]]*\]\s*$/, "").trim() || `Niimbot ${SETTINGS.NAME.split("-")[0]}`;
+            const next = status ? `${base} [${status}]` : base;
+            if (next === cur) continue;
+            const r = spawnSync("lpadmin", ["-p", queue, "-D", next], { encoding: "utf8" });
+            if (r.status === 0) logInfo(`queue ${queue} description -> "${next}"`);
+            else logInfo(`lpadmin failed for ${queue}: ${(r.stderr || "").trim()}`);
+        }
+    } catch (e) {
+        logInfo(`queue description update failed: ${e?.message || e}`);
+    }
+}
+
 // ---- Print via niimblue-node -----------------------------------------------
 const client = initClient("ble", SETTINGS.NAME, false);
 let exitCode = 0;
@@ -293,6 +322,10 @@ try {
     } catch (e) {
         logInfo(`RFID info unavailable: ${e?.message || e}`);
     }
+    const statusParts = [];
+    if (markers.names.includes("Labels")) statusParts.push(`Labels ${markers.levels[markers.names.indexOf("Labels")]}%`);
+    if (markers.names.includes("Battery")) statusParts.push(`Battery ${markers.levels[markers.names.indexOf("Battery")]}%`);
+    updateQueueDescription(statusParts.join(" · "));
     if (markers.names.length) {
         attr(`marker-names=${markers.names.join(",")} marker-types=${markers.types.join(",")} marker-colors=${markers.colors.join(",")} marker-levels=${markers.levels.join(",")} marker-low-levels=${markers.names.map(() => 10).join(",")} marker-high-levels=${markers.names.map(() => 100).join(",")}`);
         // Replace ippeveprinter's placeholder toner entries (IPP Everywhere printer-supply)

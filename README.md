@@ -20,7 +20,7 @@ Jobs are rasterised and sent over **Bluetooth (BLE)** using [`@mmote/niimblue-no
 - **Density / darkness** and **print speed** mapped from the Print dialog's Quality setting, within the model's supported density range
 - **Label type** taken from the roll's RFID tag or the printer (configurable override)
 - **Printer status in the macOS queue**: cover open, out of labels, battery low, feed error, wrong label type
-- **Supply levels** reported to CUPS: remaining labels on the roll and battery charge (`lpstat -l -p`, `ipptool`; macOS's own Supply Levels panel ignores them for locally attached IPP queues)
+- **Supply levels in the printer name**: after every job the macOS printer name reads e.g. *Niimbot D110_M [Labels 81% · Battery 75%]* (macOS's own Supply Levels panel ignores CUPS supply data for local IPP queues)
 - **Debug mode** (keeps logs and rendered rasters in `.spool`)
 
 
@@ -54,6 +54,8 @@ Put your printer’s BLE name into `config/bridge.config.json`:
   "PAGE_TIMEOUT_MS": 10000,   // timeout for sending one page's image data
   "STATUS_TIMEOUT_MS": 8000,  // timeout per status poll while waiting for the printer
   "STATUS_POLL_MS": 500,      // status poll interval
+  "STATUS_IN_NAME": "1",      // append "[Labels 81% · Battery 75%]" to the macOS printer name after each job
+  "DISPLAY_NAME": "",         // macOS printer name set by add-macos-printer.sh; "" = "Niimbot <model>"
   "DEBUG": "0"                // "1" = keep logs & .spool PNGs, "0" = quiet
 }
 ```
@@ -168,7 +170,7 @@ launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
   The printer reported the condition before or during the job. Fix it and print again; the status clears with the next job.
 
 - **Supply levels**  
-  Remaining labels (from the roll's RFID tag) and battery charge are reported to CUPS at every job:  
+  Remaining labels (from the roll's RFID tag) and battery charge are appended to the printer name after every job (disable with `"STATUS_IN_NAME": "0"`) and reported to CUPS:  
   `ipptool -tv ipp://localhost:631/printers/Niimbot_BLE get-printer-attributes.test | grep marker-`.  
   macOS's *Options & Supplies → Supply Levels* panel shows “Information Not Available” for this queue; it only fetches supplies from Bonjour-discovered printers, not from CUPS.
 
