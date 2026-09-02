@@ -1,6 +1,6 @@
 {
   "name": "niimbot-macos-printer-driver",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Use NiiMBOT (D100_M/D110/D11) as a normal printer on macOS via AirPrint/IPP with a BLE bridge using niimblue-node.",
   "repository": {
