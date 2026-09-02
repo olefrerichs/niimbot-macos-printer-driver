@@ -25,6 +25,7 @@ Jobs are rasterised and sent over **Bluetooth (BLE)** using [`@mmote/niimblue-no
 - Node.js 18+ (`brew install node`)
 - Xcode Command Line Tools (`xcode-select --install`)
 - ImageMagick (`brew install imagemagick`)
+- Ghostscript (`brew install ghostscript`)
 - `ippeveprinter` (included in CUPS; install via `brew install ipp-tools` if missing)
 - **Bluetooth permission** for your terminal app  
   (System Settings → Privacy & Security → Bluetooth)
@@ -53,6 +54,9 @@ e.g. NIIMBOT_RENDER=photo ./scripts/start-printer.sh
 ## Quick start
 
 ```bash
+# 0) Check the requirements above are met (all must print a path)
+which node convert gs ippeveprinter
+
 # 1) Clone & install
 git clone https://github.com/olefrerichs/niimbot-macos-printer-driver.git
 cd niimbot-macos-printer-driver
@@ -134,8 +138,9 @@ launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
 - **Too light/dark**  
   Adjust Print dialog **Quality** or tweak `"THRESHOLD"` in config.
 
-- **PDFs don’t print**  
-  Ensure ImageMagick is installed (`brew install imagemagick`).
+- **PDFs don’t print** (queue shows the job for a second, then it disappears; `ippeve.log` says `convert failed`)  
+  Ensure both ImageMagick and Ghostscript are installed (`brew install imagemagick ghostscript`).  
+  Test with `convert -density 406 some.pdf out.png` — `gs: command not found` means Ghostscript is missing.
 
 ###  Supported printers & media
 
