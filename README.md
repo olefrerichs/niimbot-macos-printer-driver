@@ -148,12 +148,15 @@ launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
 ```
 - The LaunchAgent runs scripts/start-printer.sh at login.
 - Printer name & defaults are read from config/bridge.config.json.
-- To enable persistent debug mode, set `NIIMBOT_DEBUG` to `1` in the installed plist and restart:
+- To enable persistent debug mode, set `NIIMBOT_DEBUG` to `1` in the installed plist and reload it
+  (`kickstart` alone keeps the old environment):
 ```bash
-plutil -replace EnvironmentVariables.NIIMBOT_DEBUG -string 1 ~/Library/LaunchAgents/local.niimbot.ipp.plist
-launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
+P=~/Library/LaunchAgents/local.niimbot.ipp.plist
+plutil -replace EnvironmentVariables.NIIMBOT_DEBUG -string 1 "$P"
+launchctl bootout gui/$(id -u)/local.niimbot.ipp; launchctl bootstrap gui/$(id -u) "$P"
 ```
   Set it back to `0` the same way; `.spool` is emptied on the next start.
+
 ### Troubleshooting
 
 - **Queue says “In Use” then “Idle” but nothing prints**  

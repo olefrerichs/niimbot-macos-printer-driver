@@ -20,8 +20,9 @@ echo
 echo "The start script reads the printer name from:"
 echo "  $HERE/config/bridge.config.json    (set NIIMBLUE_NAME there)"
 echo
-echo "To enable debug logging under launchd:"
+echo "To enable debug logging under launchd (then unload/reload, kickstart keeps the old environment):"
 echo "  plutil -replace EnvironmentVariables.NIIMBOT_DEBUG -string 1 \"$PLIST_TARGET\""
+echo "  launchctl bootout gui/$(id -u)/local.niimbot.ipp; launchctl bootstrap gui/$(id -u) \"$PLIST_TARGET\""
 echo
 echo "Kickstart it now with:"
 echo "  launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp"
