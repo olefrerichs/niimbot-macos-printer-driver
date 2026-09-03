@@ -10,12 +10,18 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import { initClient, ImageEncoder } from "@mmote/niimblue-node";
 
 // ---------- Settings (config + env) ----------
-const ROOT = process.cwd();
+// Install root comes from this file's location, not process.cwd(): ippeveprinter
+// inherits the cwd of whatever started it, which is the install root only by convention.
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const CFG_PATH = path.join(ROOT, "config", "bridge.config.json");
+// Spool directory ippeveprinter was started with (exported by scripts/start-printer.sh).
+// Empty when the bridge is run by hand - see the job file check below.
+const SPOOL_DIR = process.env.NIIMBOT_SPOOL || "";
 
 function loadJson(p) {
     try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return {}; }
@@ -130,14 +136,42 @@ function mapDensity(darknessStr, quality, meta) {
 }
 
 // ---- Rasterise (one PNG per page) -------------------------------------------
-const inPath = process.argv[2] && process.argv[2] !== "-" ? process.argv[2] : null;
-if (!inPath || !fs.existsSync(inPath)) {
+const inArg = process.argv[2] && process.argv[2] !== "-" ? process.argv[2] : null;
+if (!inArg) {
     logError("No job file path provided");
     process.exit(2);
 }
 
+let inPath;
+try {
+    inPath = fs.realpathSync(path.resolve(inArg));
+    if (!fs.statSync(inPath).isFile()) {
+        logError(`Job file is not a regular file: ${inArg}`);
+        process.exit(2);
+    }
+} catch (err) {
+    logError(`Cannot read job file ${inArg}: ${err.code ?? err.message}`);
+    process.exit(2);
+}
+
+// As ippeveprinter's print command every job file lives in the spool directory it was
+// started with, so refuse anything outside it. Run by hand the spool is unknown and any
+// readable file is accepted, which keeps `niimblue-print file.pdf` working.
+if (SPOOL_DIR) {
+    let spoolRoot = null;
+    try { spoolRoot = fs.realpathSync(SPOOL_DIR); } catch { /* reported below */ }
+    if (!spoolRoot) {
+        logError(`Spool directory not found: ${SPOOL_DIR}`);
+        process.exit(2);
+    }
+    if (!inPath.startsWith(spoolRoot + path.sep)) {
+        logError(`Job file outside the spool directory ${spoolRoot}: ${inPath}`);
+        process.exit(2);
+    }
+}
+
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "niimbot-ipp-"));
-const spoolDir = path.join(ROOT, ".spool");
+const spoolDir = SPOOL_DIR || path.join(ROOT, ".spool");
 if (SETTINGS.DEBUG) fs.mkdirSync(spoolDir, { recursive: true });
 const jobStamp = Date.now();
 

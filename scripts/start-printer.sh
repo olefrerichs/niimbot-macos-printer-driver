@@ -19,6 +19,8 @@ DEBUG="${NIIMBOT_DEBUG:-${DEBUG:-0}}"
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 
 mkdir -p "$SPOOL"
+# Hand the spool directory to the bridge so it can confine job files to it
+export NIIMBOT_SPOOL="$SPOOL"
 chmod +x "$BACKEND" || true
 
 # Clean spool if not debugging (keeps folder; removes old PNG/logs)

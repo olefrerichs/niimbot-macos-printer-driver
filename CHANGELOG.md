@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.3.1 — 2026-09-03
+
+### Hardening
+- **Install root is resolved from the script's own location** (`import.meta.url`) instead of `process.cwd()`. `scripts/start-printer.sh` never changes into the repository, so ippeveprinter — and with it the bridge — inherited the working directory of whatever started it; only the LaunchAgent's `WorkingDirectory` made that the install root. Started from anywhere else the bridge could not find `config/bridge.config.json` and aborted with "Set your printer name". Debug rasters follow the same root.
+- **Job files are confined to the spool directory.** `start-printer.sh` exports `NIIMBOT_SPOOL`, the directory it hands to `ippeveprinter -d`. When that variable is set the bridge accepts only job files inside it, resolved through symlinks, so a stray argument cannot make it read unrelated files. Run by hand the variable is unset and any readable file is accepted, keeping `niimblue-print file.pdf` usable.
+- **Distinct job file errors.** Missing file, not a regular file, and outside the spool directory are reported separately instead of all appearing as "No job file path provided".
+
+### Upgrading
+```bash
+git pull
+launchctl kickstart -k gui/$(id -u)/local.niimbot.ipp
+```
+No configuration, PPD or queue changes; the plist is untouched, so `bootout`/`bootstrap` is not needed.
+
 ## v0.3.0 — 2026-09-02
 
 ### Printing
