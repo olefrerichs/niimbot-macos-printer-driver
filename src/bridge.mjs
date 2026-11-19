@@ -13,6 +13,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import { initClient, ImageEncoder } from "@mmote/niimblue-node";
+import { rasterizeVectorPages } from "./rasterize.mjs";
 
 // ---------- Settings (config + env) ----------
 // Install root comes from this file's location, not process.cwd(): ippeveprinter
@@ -195,41 +196,7 @@ try {
             .toFile(pngOut);
         pagePaths = [pngOut];
     } else {
-        // PDF/other vector inputs: ImageMagick "convert" (needs Ghostscript for PDF).
-        // Every input page becomes page-NNN.png; no -flatten, that would merge pages.
-        const pattern = path.join(tmpDir, "page-%03d.png");
-        const common = [
-            "-units", "PixelsPerInch", "-density", "406",
-            inPath, "-colorspace", "Gray", "-background", "white", "-alpha", "remove", "-alpha", "off",
-            "-filter", "box", "-resize", `${widthPx}x${heightPx}`, // fit (no "!")
-            "-gravity", "center", "-extent", `${widthPx}x${heightPx}`
-        ];
-        const args = (SETTINGS.RENDER === "photo")
-            ? [...common, "-dither", "FloydSteinberg", "-colors", "2", "-type", "bilevel", "+adjoin", pattern]
-            : [...common, "-unsharp", "0x1+0.8+0.02", "-threshold", SETTINGS.THRESHOLD, "-type", "bilevel", "+adjoin", pattern];
-
-        const conv = spawnSync("convert", args, { stdio: ["ignore", "ignore", "pipe"] });
-        if (conv.error?.code === "ENOENT") {
-            logError("ImageMagick 'convert' not found on PATH (brew install imagemagick ghostscript)");
-            process.exit(3);
-        }
-        if (conv.status !== 0) {
-            // Keep the last meaningful stderr lines (skip the IMv7 deprecation banner)
-            const detail = (conv.stderr || "").toString()
-                .split("\n").map(l => l.trim())
-                .filter(l => l && !/deprecated/i.test(l))
-                .slice(-3).join(" | ");
-            logError(`convert failed (exit ${conv.status})${detail ? ": " + detail : ""}`);
-            process.exit(3);
-        }
-        pagePaths = fs.readdirSync(tmpDir)
-            .filter(f => /^page-\d+\.png$/.test(f))
-            .sort()
-            .map(f => path.join(tmpDir, f));
-        if (pagePaths.length === 0) {
-            logError("convert produced no pages");
-            process.exit(3);
-        }
+        pagePaths = rasterizeVectorPages(inPath, tmpDir, widthPx, heightPx, SETTINGS.RENDER, SETTINGS.THRESHOLD);
     }
 
     if (SETTINGS.DEBUG) {
